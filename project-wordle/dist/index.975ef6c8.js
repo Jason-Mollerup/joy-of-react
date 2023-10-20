@@ -27227,8 +27227,12 @@ parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
+var _constants = require("../../constants");
+var _gameHelpers = require("../../game-helpers");
 var _utils = require("../../utils");
 var _data = require("../../data");
+var _s = $RefreshSig$();
+const EMPTY_GUESS = "     ";
 // Pick a random word on every pageload.
 const answer = (0, _utils.sample)((0, _data.WORDS));
 // To make debugging easier, we'll log the solution in the console.
@@ -27236,10 +27240,155 @@ console.info({
     answer
 });
 function Game() {
+    _s();
+    const [gameStatus, setGameStatus] = (0, _react.useState)("playing");
+    const [guesses, setGuesses] = (0, _react.useState)([]);
+    const [guess, setGuess] = (0, _react.useState)("");
+    const guessesToMap = new Array((0, _constants.NUM_OF_GUESSES_ALLOWED)).fill(EMPTY_GUESS).map((empty, index)=>{
+        console.log(!!guesses[index]);
+        return !!guesses[index] ? guesses[index] : empty;
+    });
+    const checkWin = ()=>{
+        return guesses.some((guess)=>{
+            return (0, _gameHelpers.checkGuess)(guess, answer).every(({ status  })=>status === "correct");
+        });
+    };
+    (0, _react.useEffect)(()=>{
+        setGameStatus(checkWin() ? "won" : guesses.length === (0, _constants.NUM_OF_GUESSES_ALLOWED) ? "lost" : "playing");
+    }, [
+        guesses
+    ]);
+    const handleSubmit = (event)=>{
+        event.preventDefault();
+        if (guess.length !== 5) window.alert("Guess must be 5 characters");
+        else {
+            setGuesses([
+                ...guesses,
+                guess
+            ]);
+            setGuess("");
+        }
+    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
-        children: "Put a game here!"
-    }, void 0, false);
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "guess-results",
+                children: guessesToMap.map((guess, guessIndex)=>{
+                    const checkedGuess = (0, _gameHelpers.checkGuess)(guess, answer);
+                    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "guess",
+                        children: checkedGuess.map(({ letter , status  }, letterIndex)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: `cell ${status}`,
+                                children: letter
+                            }, `guess${guessIndex}-letter${letterIndex}`, false, {
+                                fileName: "src/components/Game/Game.js",
+                                lineNumber: 63,
+                                columnNumber: 17
+                            }, this))
+                    }, `guess-${guessIndex}`, false, {
+                        fileName: "src/components/Game/Game.js",
+                        lineNumber: 61,
+                        columnNumber: 13
+                    }, this);
+                })
+            }, void 0, false, {
+                fileName: "src/components/Game/Game.js",
+                lineNumber: 57,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
+                className: "guess-input-wrapper",
+                onSubmit: handleSubmit,
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        htmlFor: "guess-input",
+                        children: "Enter guess:"
+                    }, void 0, false, {
+                        fileName: "src/components/Game/Game.js",
+                        lineNumber: 75,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        id: "guess-input",
+                        type: "text",
+                        value: guess,
+                        onChange: (event)=>setGuess(event.target.value.toUpperCase()),
+                        maxLength: 5,
+                        disabled: gameStatus !== "playing"
+                    }, void 0, false, {
+                        fileName: "src/components/Game/Game.js",
+                        lineNumber: 76,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/Game/Game.js",
+                lineNumber: 74,
+                columnNumber: 7
+            }, this),
+            gameStatus === "won" && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "happy banner",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                            children: "Congratulations!"
+                        }, void 0, false, {
+                            fileName: "src/components/Game/Game.js",
+                            lineNumber: 88,
+                            columnNumber: 13
+                        }, this),
+                        " Got it in",
+                        " ",
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                            children: [
+                                guesses.length,
+                                " guesses"
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/components/Game/Game.js",
+                            lineNumber: 89,
+                            columnNumber: 13
+                        }, this),
+                        "."
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/Game/Game.js",
+                    lineNumber: 87,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/Game/Game.js",
+                lineNumber: 86,
+                columnNumber: 9
+            }, this),
+            gameStatus === "lost" && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "sad banner",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                    children: [
+                        "Sorry, the correct answer is ",
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                            children: answer
+                        }, void 0, false, {
+                            fileName: "src/components/Game/Game.js",
+                            lineNumber: 96,
+                            columnNumber: 42
+                        }, this),
+                        "."
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/Game/Game.js",
+                    lineNumber: 95,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/Game/Game.js",
+                lineNumber: 94,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true);
 }
+_s(Game, "aZWjHoo1KG24/+Chq+JQHBy7Ey0=");
 _c = Game;
 exports.default = Game;
 var _c;
@@ -27250,7 +27399,7 @@ $RefreshReg$(_c, "Game");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../utils":"en4he","../../data":"9kapS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"en4he":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../utils":"en4he","../../data":"9kapS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../constants":"3huJa","../../game-helpers":"dWwK5"}],"en4he":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "sample", ()=>sample);
@@ -27493,7 +27642,55 @@ function registerExportsForReactRefresh(module1) {
     }
 }
 
-},{"7422ead32dcc1e6b":"786KC"}],"cxSZo":[function(require,module,exports) {
+},{"7422ead32dcc1e6b":"786KC"}],"3huJa":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "NUM_OF_GUESSES_ALLOWED", ()=>NUM_OF_GUESSES_ALLOWED);
+const NUM_OF_GUESSES_ALLOWED = 6;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dWwK5":[function(require,module,exports) {
+/**
+ * Thanks to Github user dylano for supplying a more-accurate
+ * solving algorithm!
+ */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "checkGuess", ()=>checkGuess);
+function checkGuess(guess, answer) {
+    // This constant is a placeholder that indicates we've successfully
+    // dealt with this character (it's correct, or misplaced).
+    const SOLVED_CHAR = "✓";
+    if (!guess) return null;
+    const guessChars = guess.toUpperCase().split("");
+    const answerChars = answer.split("");
+    const result = [];
+    // Step 1: Look for correct letters.
+    for(let i = 0; i < guessChars.length; i++)if (guessChars[i] === answerChars[i]) {
+        result[i] = {
+            letter: guessChars[i],
+            status: "correct"
+        };
+        answerChars[i] = SOLVED_CHAR;
+        guessChars[i] = SOLVED_CHAR;
+    }
+    // Step 2: look for misplaced letters. If it's not misplaced,
+    // it must be incorrect.
+    for(let i = 0; i < guessChars.length; i++){
+        if (guessChars[i] === SOLVED_CHAR) continue;
+        let status = "incorrect";
+        const misplacedIndex = answerChars.findIndex((char)=>char === guessChars[i]);
+        if (misplacedIndex >= 0) {
+            status = "misplaced";
+            answerChars[misplacedIndex] = SOLVED_CHAR;
+        }
+        result[i] = {
+            letter: guessChars[i],
+            status
+        };
+    }
+    return result;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cxSZo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _headerDefault.default));
